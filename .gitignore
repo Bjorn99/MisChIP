@@ -14,9 +14,9 @@ data/simulated/*
 !data/simulated/.gitkeep
 
 # Results (regeneratable)
-results/figures/*
+#results/figures/*
 results/tables/*
-results/peak_calls/*
+#results/peak_calls/*
 # Keep directory structure
 !results/figures/.gitkeep
 !results/tables/.gitkeep
