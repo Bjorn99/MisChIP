@@ -80,13 +80,13 @@ This project draws from:
 
 Planned implementations:
 
-    1. **Sliding Window** - Simple fixed-window approach
+    1. Sliding Window - Simple fixed-window approach
     
-    2. **MACS2 Algorithm** - Dynamic local background model
+    2. MACS2 Algorithm - Dynamic local background model
     
-    3. **SICER** - Designed for broad mark
+    3. SICER - Designed for broad mark
     
-    4. **Simple Bayesian** - Prior/posterior approach
+    4. Simple Bayesian - Prior/posterior approach
 
 **Key Learning:** Different statistical approaches to the same problem
 
