@@ -174,7 +174,8 @@ By completing this project, I expect to:
 3. **Compare approaches** - When does MACS2 outperform sliding window? Why use SICER for broad marks?
 4. **Make informed choices** - Given a new ChIP-seq dataset, know which method to use
 
-```**Note**: This project focuses on understanding basic peak calling principles using simulated data. We use FDR (False Discovery Rate) using **Benjamini-Hochberg** correction but not IDR (Irreproducible Discovery Rate), which is used for comparing biological replicates to assess reproducibility.
+```
+**Note**: This project focuses on understanding basic peak calling principles using simulated data. We use FDR (False Discovery Rate) using **Benjamini-Hochberg** correction but not IDR (Irreproducible Discovery Rate), which is used for comparing biological replicates to assess reproducibility.
 
 - This is a learning project - code clarity is prioritized over computational efficiency
 - Each script includes detailed comments explaining the "why" behind each step
