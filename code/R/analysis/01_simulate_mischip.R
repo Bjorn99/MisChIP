@@ -497,3 +497,90 @@ create_base_genome <- function(params) {
   saveRDS(h3k27me3_genome, file.path(output_dir, "h3k27me3_base_genome.rds"))
 
   cat("\n Base genomes saved to:", output_dir, "\n")
+
+
+# >>> PHASE 1, TASK 4: ADD PEAKS TO SIMULATED DATA
+
+# Function to generate peak locations with minimum distance constarint
+
+generate_peak_locations <- function(n_peaks, n_bins, min_distance_bins,
+                                    peak_width_mean, peak_width_sd) {
+  # Generate non_overlapping peak locations
+
+  # @param n_peaks = No. of peaks to place
+  # @param n_bins = Total no. of bins in genome
+  # @param min_distance_bins = Minimum distance between peak centers (in bins)
+  # @param peak_width_mean = Mean peak width for boundary checking
+  # @param peak_width_sd = SD of peak width for boundary checking
+  # @return Data frame with peak information
+
+  # Peaks can't overlap or be too close together
+  # Real binding sites have spatial constarints (Steric hindrance)
+
+  peak_locations <- numeric(0)
+  attempts <- 0
+  max_attempts <- n_peaks* 100            # Prevent infinite loops
+
+  while (length(peak_locations) < n_peaks && attempts < max_attempts) {
+    attempts <- attempts + 1
+
+    # buffer space for peak width
+    buffer <- ceiling((peak_width_mean + 2 * peak_width_sd) / BIN_SIZE)
+    new_location <- sample(buffer:(n_bins - buffer), 1)
+
+    # Check minimum distance to existing peaks
+    if (length(peak_locations) == 0) {
+      # First peak - always accept
+      peak_locations <- c(peak_locations, new_location)
+    } else {
+      # check distance to all existing peaks
+      distances <- abs(peak_locations - new_location)
+      if (all(distances >= min_distance_bins)) {
+        peak_locations <- c(peak_locations, new_location)
+      }
+    }
+  }
+
+  if (length(peak_locations) < n_peaks) {
+    warning(sprintf("only able to place %d out of %d peaks",
+                    length(peak_locations), n_peaks))
+  }
+
+  # Generate peak characterstics
+  # Why variation? Biology is noisy!
+  peak_df <- data.frame(
+    peak_id = 1:length(peak_locations),
+    center_bin = peak_locations,
+
+    # Peak width varies (some proteins bind tighter regions than others)
+    width_bp = rnorm(
+      length(peak_locations),
+      mean = peak_width_mean,
+      sd = peak_width_sd
+    ),
+
+    # Enrichment varies (difference in binding affinity)
+    max_enrichment = rnorm(
+      length(peak_locations),
+      mean = params$enrichment_mean,
+      sd = params$enrichment_sd
+    ))
+
+
+    # Ensure positive values
+    peak_df$width_bp <- pmax(peak_df$width_bp, BIN_SIZE * 2) # At least 2 bins wide
+    peak_df$max_enrichment <- pmax(peak_df$max_enrichment, 2) # At least 2 fold
+
+
+    # Convert width to bins
+    peak_df$width_bins <- ceiling(peak_df$width_bp / BIN_SIZE)
+
+    # Sort by position
+    peak_df <- peak_df[order(peak_df$center_bin), ]
+
+
+    return(peak_df)
+}
+
+
+
